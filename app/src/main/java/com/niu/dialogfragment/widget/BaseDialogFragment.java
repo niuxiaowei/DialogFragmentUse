@@ -45,16 +45,18 @@ public class BaseDialogFragment extends DialogFragment {
         super.onResume();
         BaseDialogListener listener = null;
 
+
         if(!mIsParseDialogListener){
             mIsParseDialogListener = true;
-            //解析接口
-            if (mBaseActivity != null) {
-                listener = mBaseActivity.getDialogListener();
-            }
 
-            //这种情况说明是一个fragment启动的对话框，并且它的级别要比上面activity高，所以存在会覆盖掉 activity实现的OnClickListener接口
+
+            /*/解析dialog listener，fragment的级别要大于activity，若 (getParentFragment() instanceof BaseFragment)为true
+            * ，表明是一个fragment调起的dialog，否则是一个activity调起的diaolog
+            * */
             if (getParentFragment() instanceof BaseFragment) {
                 listener = ((BaseFragment) getParentFragment()).getDialogListener();
+            }else if(mBaseActivity != null){
+                listener = mBaseActivity.getDialogListener();
             }
             if (listener != null) {
                 onReceiveDialogListener(listener);
@@ -99,6 +101,20 @@ public class BaseDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         parseArgs( getArguments());
         setCancelable(mIsCancelable);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+         /*销毁basefragment或BaseActivity中的dialog listener，
+           *  同理BaseFragment级别要高于BaseActivity
+            * */
+        if (getParentFragment() instanceof BaseFragment) {
+            ((BaseFragment) getParentFragment()).clearDialogListener();
+        }else if(mBaseActivity != null){
+            mBaseActivity.clearDialogListener();
+        }
 
     }
 

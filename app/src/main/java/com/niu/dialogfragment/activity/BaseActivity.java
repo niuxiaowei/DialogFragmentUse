@@ -20,6 +20,13 @@ public abstract class BaseActivity extends FragmentActivity  {
         return mDialogFactory.mListenerHolder.getDialogListener();
     }
 
+    /**
+     * 清空DialogListenerHolder中的dialog listener
+     */
+    public void clearDialogListener(){
+        mDialogFactory.mListenerHolder.setDialogListener(null);
+    }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
