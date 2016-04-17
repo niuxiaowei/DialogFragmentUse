@@ -57,10 +57,13 @@ public class DialogFactory {
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             Fragment fragment = mFragmentManager.findFragmentByTag(DIALOG_PROGRESS_TAG);
             if (null != fragment) {
-                ft.remove(fragment);
+                ft.remove(fragment).commit();
             }
+
             ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(message, cancelable);
-            progressDialogFragment.show(mFragmentManager,DIALOG_PROGRESS_TAG);
+            progressDialogFragment.show(mFragmentManager, DIALOG_PROGRESS_TAG);
+
+            mFragmentManager.executePendingTransactions();
         }
     }
 
@@ -71,7 +74,7 @@ public class DialogFactory {
         Fragment fragment = mFragmentManager.findFragmentByTag(DIALOG_PROGRESS_TAG);
         if (null != fragment) {
             ((ProgressDialogFragment)fragment).dismiss();
-            mFragmentManager.beginTransaction().remove(fragment);
+            mFragmentManager.beginTransaction().remove(fragment).commit();
         }
     }
 
@@ -92,6 +95,8 @@ public class DialogFactory {
         }
         DialogFragment df = ConfirmDialogFragment.newInstance(title, message, cancelable);
         df.show(mFragmentManager,DIALOG_CONFIRM_TAG);
+        mFragmentManager.executePendingTransactions();
+
         mListenerHolder.setDialogListener(listener);
     }
 
@@ -109,6 +114,8 @@ public class DialogFactory {
         }
         DialogFragment df = ListDialogFragment.newInstance(items,cancelable);
         df.show(mFragmentManager,DIALOG_LIST_TAG);
+        mFragmentManager.executePendingTransactions();
+
         mListenerHolder.setDialogListener(listDialogListener);
     }
 }
